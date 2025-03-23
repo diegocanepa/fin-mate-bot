@@ -6,7 +6,6 @@ from telegram import Update, Bot
 from telegram.ext import Application, MessageHandler, filters, CommandHandler
 from bot.handlers import command_handlers, message_handlers
 from pydantic import BaseModel
-import telebot
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
