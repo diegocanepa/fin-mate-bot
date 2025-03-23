@@ -2,3 +2,4 @@ python-telegram-bot
 python-dotenv
 httpx
 Flask==3.1.0
+pydantic
