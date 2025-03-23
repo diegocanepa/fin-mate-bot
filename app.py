@@ -1,11 +1,12 @@
 import logging
-from flask import Flask
+from flask import Flask, request
 from typing import Optional
 from config.config import config
 from telegram import Update, Bot
 from telegram.ext import Application, MessageHandler, filters, CommandHandler
 from bot.handlers import command_handlers, message_handlers
 from pydantic import BaseModel
+import telebot
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -42,8 +43,9 @@ def webhook(webhook_data: TelegramWebhook):
     Telegram Webhook
     '''
     # Method 1
+    webhook_data = TelegramWebhook(**request.get_json())
     bot = Bot(token=config.TELEGRAM_BOT_TOKEN)
-    update = Update.de_json(webhook_data.model_dump(), bot)  # Convert the Telegram Webhook class to dictionary using dict() method
+    update = Update.de_json(webhook_data, bot) 
     application = Application.builder().token(config.TELEGRAM_BOT_TOKEN).build()
     register_handlers(application)
 
