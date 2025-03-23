@@ -43,7 +43,7 @@ def webhook(webhook_data: TelegramWebhook):
     '''
     # Method 1
     bot = Bot(token=config.TELEGRAM_BOT_TOKEN)
-    update = Update.de_json(webhook_data.dict(), bot)  # Convert the Telegram Webhook class to dictionary using dict() method
+    update = Update.de_json(webhook_data.model_dump(), bot)  # Convert the Telegram Webhook class to dictionary using dict() method
     application = Application.builder().token(config.TELEGRAM_BOT_TOKEN).build()
     register_handlers(application)
 
@@ -56,3 +56,11 @@ def webhook(webhook_data: TelegramWebhook):
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
+
+
+if __name__ == '__main__':
+    # Run the Flask application using Uvicorn for better performance in production.
+    # Host '0.0.0.0' makes the application accessible from outside the container.
+    # Port '8080' is the default port for this application.
+    logger.info("Starting Flask development server...")
+    app.run(host="0.0.0.0", port=8080)
