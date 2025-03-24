@@ -17,8 +17,8 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             base_api_url = config.API_BASE_URL
             headers = {'Content-Type': 'application/json'}
             response = await client.post(f'{base_api_url}/action', json={'content': user_message}, headers=headers)
-            response.raise_for_status()  # Raise an exception for non-2xx status codes
             data = response.json()
+            print(f'api response: {data}')
             response_text = f"API Response: {data}"
             await update.message.reply_text(response_text)
     except httpx.RequestError as e:
