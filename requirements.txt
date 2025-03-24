@@ -3,3 +3,5 @@ python-dotenv
 httpx
 Flask==3.1.0
 pydantic
+uvicorn
+asgiref
