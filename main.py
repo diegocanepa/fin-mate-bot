@@ -55,14 +55,13 @@ def register_handlers(telegram_app):
     # on non command, call the serive with the message
     telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handlers.echo))
     
-async def initialize_telegram_app():
+def initialize_telegram_app():
     """Initializes the Telegram Application."""
     register_handlers(telegram_app)
-    await telegram_app.initialize()  # Explicitly initialize
-    return telegram_app
+    telegram_app.initialize() 
 
 if __name__ == '__main__':
     # This should not be run in Vercel. Vercel will handle requests to /api/webhook
     import asyncio
-    asyncio.run(initialize_telegram_app()) 
+    initialize_telegram_app()
     app.run(debug=True, port=8080)
