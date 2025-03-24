@@ -2,7 +2,7 @@ import logging
 from flask import Flask, request, jsonify
 from telegram import Update
 from config.config import config
-from telegram.ext import Application, Dispatcher, MessageHandler, filters, CommandHandler
+from telegram.ext import Application, MessageHandler, filters, CommandHandler
 from bot.handlers import command_handlers, message_handlers
 
 # Configure logging
@@ -13,7 +13,6 @@ app = Flask(__name__)
 
 # Initialize Telegram Bot Application (without running polling)
 telegram_app = Application.builder().token(config.TELEGRAM_BOT_TOKEN).build()
-dispatcher: Dispatcher = telegram_app.dispatcher
 
 @app.route('/api/webhook', methods=['POST'])
 async def webhook():
@@ -21,7 +20,7 @@ async def webhook():
     try:
         data = request.get_json(force=True)
         update = Update.de_json(data, telegram_app.bot)
-        await dispatcher.process_update(update)
+        await telegram_app.process_update(update)
         return jsonify({"status": "OK"}), 200
     except Exception as e:
         logger.error(f"Error processing webhook: {e}", exc_info=True)
@@ -48,15 +47,15 @@ def hello():
     return "FinMate Bot is running (Webhook Mode)"
 
 
-def register_handlers(dispatcher):
+def register_handlers(telegram_app):
     # on different commands - answer in Telegram
-    dispatcher.add_handler(CommandHandler("start", command_handlers.start))
-    dispatcher.add_handler(CommandHandler("help", command_handlers.help_command))
+    telegram_app.add_handler(CommandHandler("start", command_handlers.start))
+    telegram_app.add_handler(CommandHandler("help", command_handlers.help_command))
     
     # on non command, call the serive with the message
-    dispatcher.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handlers.echo))
+    telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handlers.echo))
     
 if __name__ == '__main__':
     # This should not be run in Vercel. Vercel will handle requests to /api/webhook
-    register_handlers(dispatcher)
+    register_handlers(telegram_app)
     app.run(debug=True, port=8080)
